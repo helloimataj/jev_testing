@@ -58,6 +58,22 @@ def cmd_advise(args):
         print(f"{v:>9.1%}   {describe(action)}")
 
 
+def cmd_calibrate(args):
+    from .live.screen import calibrate
+    calibrate()
+
+
+def cmd_capture(args):
+    from pathlib import Path
+    from .live.screen import capture
+    capture(Path(args.out))
+
+
+def cmd_live(args):
+    from .live.controller import run
+    run(dry_run=args.dry_run, budget=args.budget)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="buckshot", description="A bot that plays Buckshot Roulette.")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -86,6 +102,18 @@ def main(argv=None):
     adv.add_argument("--inverted", action="store_true", help="you already used the inverter on this shell")
     adv.add_argument("--dealer-cuffed", action="store_true", help="the dealer will skip their next turn")
     adv.set_defaults(func=cmd_advise)
+
+    cal = sub.add_parser("calibrate", help="record where to click in the real game (Windows)")
+    cal.set_defaults(func=cmd_calibrate)
+
+    cap = sub.add_parser("capture", help="save screenshots of the real game with F9")
+    cap.add_argument("--out", default="screenshots")
+    cap.set_defaults(func=cmd_capture)
+
+    live = sub.add_parser("live", help="play the real game: the bot clicks, you report what it can't see")
+    live.add_argument("--dry-run", action="store_true", help="print clicks instead of making them")
+    live.add_argument("--budget", type=int, default=5_000, help="search size per move")
+    live.set_defaults(func=cmd_live)
 
     args = p.parse_args(argv)
     args.func(args)
