@@ -45,6 +45,19 @@ returns every outcome with its probability. The solver averages over those
 outcomes; the game engine (`buckshot/engine.py`) picks the one that matches
 the real shotgun. Both share the same rules code, so they can't drift apart.
 
+## Results
+
+From `python3 -m buckshot sim --games 200`, against the dealer model:
+
+| policy | round 1 | round 2 | round 3 | full run |
+| --- | --- | --- | --- | --- |
+| solver | 74.5% | 96.0% | 98.0% | 68.5% |
+| naive (no items, shoot by the odds) | 67.5% | 49.0% | 48.0% | 15.5% |
+
+Round 1 has no items and only 2 HP, so luck decides most of it. The solver's
+edge there comes from exploiting the dealer's habit of shooting itself when
+blanks are more likely. A full run must win all three rounds.
+
 ## Simplifications
 
 This is a model of the game, not a copy of it:
